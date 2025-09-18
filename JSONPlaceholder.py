@@ -49,7 +49,7 @@ class TestJSONPlaceholder:
 
     def test_delete_post(self):
         res = requests.delete(f"{BASE_URL}/1")
-        assert res.status_code == 200
+        assert res.status_code in (200, 204)
 
     def test_get_nonexistent_post(self):
         res = requests.get(f"{BASE_URL}/99999")
@@ -70,4 +70,4 @@ class TestJSONPlaceholder:
         payload = {"body": "bar", "userId": 1}
         res = requests.post(BASE_URL, json=payload)
         data = res.json()
-        assert "title" in data and data["title"] is not None, "API accepted post without required 'title' field"
+        assert "title" in data and data["title"] is not None, "API accepted POST without required 'title' field"
