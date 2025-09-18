@@ -13,12 +13,13 @@ class TestJSONPlaceholder:
         for key in ("id", "userId", "title", "body"):
             assert key in data
 
-    def test_get_posts_by_userid(self):
+    def test_get_posts_by_userId(self):
         res = requests.get(BASE_URL, params={"userId": 1})
         assert res.status_code == 200
         data = res.json()
         assert isinstance(data, list)
         assert len(data) > 0
+        # for all posts in the response, userId should be 1
         for key in data:
             assert key["userId"] == 1
 
@@ -60,3 +61,13 @@ class TestJSONPlaceholder:
         except Exception:
             # If not JSON, that's fine for 404
             assert res.status_code == 404
+
+    def test_post_invalid_body(self):
+        """
+        Test creating a post with missing required fields
+        Note: JSONPlaceholder may still return 201/200, but logically this is a failure
+        """
+        payload = {"body": "bar", "userId": 1}
+        res = requests.post(BASE_URL, json=payload)
+        data = res.json()
+        assert "title" in data and data["title"] is not None, "API accepted post without required 'title' field"
